@@ -19,7 +19,7 @@ import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/accounts")
+@RequestMapping("/cuentas")
 @RequiredArgsConstructor
 public class AccountController {
 

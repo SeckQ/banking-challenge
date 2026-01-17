@@ -14,7 +14,7 @@ import reactor.core.scheduler.Schedulers;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/api/v1/reports")
+@RequestMapping("/reportes")
 @RequiredArgsConstructor
 @Slf4j
 public class ReportController {

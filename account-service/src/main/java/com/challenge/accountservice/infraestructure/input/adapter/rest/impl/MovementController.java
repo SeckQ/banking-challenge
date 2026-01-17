@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @RestController
-@RequestMapping("/api/v1/movements")
+@RequestMapping("/movimientos")
 @RequiredArgsConstructor
 @Slf4j
 public class MovementController {
