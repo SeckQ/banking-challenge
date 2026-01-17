@@ -4,6 +4,7 @@ import com.challenge.customerservice.application.input.port.CustomerUseCase;
 import com.challenge.customerservice.domain.model.Customer;
 import com.challenge.customerservice.infraestructure.input.adapter.rest.bean.CustomerRequest;
 import com.challenge.customerservice.infraestructure.input.adapter.rest.bean.CustomerResponse;
+import com.challenge.customerservice.infraestructure.input.adapter.rest.bean.CustomerStatusRequest;
 import com.challenge.customerservice.infraestructure.input.adapter.rest.mapper.CustomerMapperRest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @RestController
-@RequestMapping("/api/v1/customers")
+@RequestMapping("/clientes")
 @RequiredArgsConstructor
 @Slf4j
 public class CustomerController {
@@ -83,5 +84,17 @@ public class CustomerController {
                 }).doOnError(e -> log.error("Error deleting customer with ID {}: {}", id, e.getMessage()))
                 .subscribeOn(Schedulers.boundedElastic())
                 .then();
+    }
+
+    @PatchMapping("/{id}")
+    public Mono<ResponseEntity<CustomerResponse>> updateCustomerStatus(@PathVariable Long id,
+                                                                        @Valid @RequestBody CustomerStatusRequest statusRequest) {
+        log.info("Request received to update status for customer with id: {} to {}", id, statusRequest.getStatus());
+        return Mono.fromCallable(() -> {
+            Customer updated = customerUseCase.updateCustomerStatus(id, statusRequest.getStatus());
+            log.info("Customer with ID {} status updated successfully", id);
+            return ResponseEntity.ok(mapper.toResponse(updated));
+        }).doOnError(e -> log.error("Error updating status for customer with ID {}: {}", id, e.getMessage()))
+        .subscribeOn(Schedulers.boundedElastic());
     }
 }

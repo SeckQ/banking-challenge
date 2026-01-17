@@ -76,4 +76,20 @@ public class CustomerServiceImpl implements CustomerUseCase {
         customerRepositoryPort.deleteById(id);
         log.info("Customer with ID {} deleted successfully", id);
     }
+
+    @Override
+    public Customer updateCustomerStatus(Long id, Boolean status) {
+        log.info("Updating status for customer with id: {} to {}", id, status);
+
+        Customer customer = customerRepositoryPort.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Customer with ID {} not found for status update", id);
+                    return new EntityNotFoundException("Customer not found with id: " + id);
+                });
+
+        customer.setStatus(status);
+        Customer updated = customerRepositoryPort.save(customer);
+        log.info("Customer with ID {} status updated successfully to {}", id, status);
+        return updated;
+    }
 }
