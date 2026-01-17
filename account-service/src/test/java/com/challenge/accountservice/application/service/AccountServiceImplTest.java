@@ -4,7 +4,6 @@ import com.challenge.accountservice.application.output.port.CustomerClient;
 import com.challenge.accountservice.application.output.port.AccountRepositoryPort;
 import com.challenge.accountservice.application.service.impl.AccountServiceImpl;
 import com.challenge.accountservice.domain.model.Account;
-import com.challenge.accountservice.domain.model.AccountStatus;
 import com.challenge.accountservice.domain.model.AccountType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +40,7 @@ public class AccountServiceImplTest {
                 "123",
                 AccountType.AHORROS,
                 500.0,
-                AccountStatus.ACTIVE,
+                true,
                 1L
         );
     }
@@ -61,12 +60,10 @@ public class AccountServiceImplTest {
 
     @Test
     void getAllAccounts_shouldReturnList_withClientNames() {
-        Account acc1 = new Account(1L, "111", AccountType.CORRIENTE, 1000.0, AccountStatus.ACTIVE, 1L);
-        Account acc2 = new Account(2L, "222", AccountType.AHORROS, 500.0, AccountStatus.ACTIVE, 2L);
+        Account acc1 = new Account(1L, "111", AccountType.CORRIENTE, 1000.0, true, 1L);
+        Account acc2 = new Account(2L, "222", AccountType.AHORROS, 500.0, true, 2L);
 
         when(accountRepository.findAll()).thenReturn(Arrays.asList(acc1, acc2));
-        when(customerClient.getCustomerNameById(1L)).thenReturn("Cliente A");
-        when(customerClient.getCustomerNameById(2L)).thenReturn("Cliente B");
 
         List<Account> result = accountService.getAllAccounts();
 
@@ -78,7 +75,6 @@ public class AccountServiceImplTest {
     @Test
     void getAccountById_shouldReturnAccount() {
         when(accountRepository.findById(1L)).thenReturn(Optional.of(mockAccount));
-        when(customerClient.getCustomerNameById(1L)).thenReturn("Cliente X");
 
         Optional<Account> resultOpt = accountService.getAccountById(1L);
         assertTrue(resultOpt.isPresent());
@@ -90,11 +86,10 @@ public class AccountServiceImplTest {
 
     @Test
     void updateAccount_shouldModifyAndReturnUpdatedAccount() {
-        Account updatedAccount = new Account(1L, "ABC123", AccountType.CORRIENTE, 1500.0, AccountStatus.ACTIVE, 5L);
+        Account updatedAccount = new Account(1L, "ABC123", AccountType.CORRIENTE, 1500.0, true, 5L);
 
-        when(accountRepository.findById(1L)).thenReturn(Optional.of(mockAccount));
+        when(accountRepository.existsById(1L)).thenReturn(true);
         when(accountRepository.save(any(Account.class))).thenReturn(updatedAccount);
-        when(customerClient.getCustomerNameById(5L)).thenReturn("Cliente 5");
 
         Account result = accountService.updateAccount(1L, updatedAccount);
 

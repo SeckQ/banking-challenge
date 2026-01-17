@@ -33,7 +33,7 @@ public class MovementServiceImplTest {
 
     @Test
     void createMovement_credit_shouldIncreaseBalance() {
-        Account acc = new Account(1L, "123", com.challenge.accountservice.domain.model.AccountType.AHORROS, 500.0, com.challenge.accountservice.domain.model.AccountStatus.ACTIVE, 1L);
+        Account acc = new Account(1L, "123", com.challenge.accountservice.domain.model.AccountType.AHORROS, 500.0, true, 1L);
         Movement mov = new Movement(null, null, MovementType.CREDITO, 200.0, null, acc);
 
         when(accountRepository.findByAccountNumber("123")).thenReturn(Optional.of(acc));
@@ -52,7 +52,7 @@ public class MovementServiceImplTest {
 
     @Test
     void createMovement_debit_shouldDecreaseBalance() {
-        Account acc = new Account(1L, "123", com.challenge.accountservice.domain.model.AccountType.AHORROS, 500.0, com.challenge.accountservice.domain.model.AccountStatus.ACTIVE, 1L);
+        Account acc = new Account(1L, "123", com.challenge.accountservice.domain.model.AccountType.AHORROS, 500.0, true, 1L);
         Movement mov = new Movement(null, null, MovementType.DEBITO, 100.0, null, acc);
 
         when(accountRepository.findByAccountNumber("123")).thenReturn(Optional.of(acc));
@@ -70,7 +70,7 @@ public class MovementServiceImplTest {
 
     @Test
     void createMovement_withInsufficientFunds_shouldThrowException() {
-        Account acc = new Account(1L, "123", com.challenge.accountservice.domain.model.AccountType.AHORROS, 50.0, com.challenge.accountservice.domain.model.AccountStatus.ACTIVE, 1L);
+        Account acc = new Account(1L, "123", com.challenge.accountservice.domain.model.AccountType.AHORROS, 50.0, true, 1L);
         Movement mov = new Movement(null, null, MovementType.DEBITO, 100.0, null, acc);
 
         when(accountRepository.findByAccountNumber("123")).thenReturn(Optional.of(acc));

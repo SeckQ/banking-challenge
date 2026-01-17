@@ -1,6 +1,5 @@
 package com.challenge.accountservice.infraestructure.input.adapter.rest.bean;
 
-import com.challenge.accountservice.domain.model.AccountStatus;
 import com.challenge.accountservice.domain.model.AccountType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +13,6 @@ public class AccountResponseDTO {
     private String accountNumber;
     private AccountType accountType;
     private Double initialBalance;
-    private AccountStatus status;
+    private Boolean status;
     private String clientName;
 }

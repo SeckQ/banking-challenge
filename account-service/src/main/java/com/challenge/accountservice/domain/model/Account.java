@@ -18,7 +18,7 @@ public class Account {
 
     private Double initialBalance;
 
-    private AccountStatus status;
+    private Boolean status;
 
     private Long clientId;
 }

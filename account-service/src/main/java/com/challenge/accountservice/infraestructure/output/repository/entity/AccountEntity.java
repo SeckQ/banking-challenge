@@ -1,8 +1,6 @@
 package com.challenge.accountservice.infraestructure.output.repository.entity;
 
-import com.challenge.accountservice.domain.model.AccountStatus;
 import com.challenge.accountservice.domain.model.AccountType;
-import com.challenge.accountservice.domain.model.MovementType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,8 +23,7 @@ public class AccountEntity {
 
     private Double initialBalance;
 
-    @Enumerated(EnumType.STRING)
-    private AccountStatus status;
+    private Boolean status;
 
     private Long clientId;
 
