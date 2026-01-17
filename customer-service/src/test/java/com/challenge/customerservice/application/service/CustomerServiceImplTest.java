@@ -129,4 +129,88 @@ class CustomerServiceImplTest {
 
         assertThrows(EntityNotFoundException.class, () -> customerService.deleteCustomer(99L));
     }
+
+    @Test
+    void updateCustomerStatus_shouldUpdateStatusSuccessfully() {
+        // Given
+        Customer existing = createSampleCustomer(1L);
+        existing.setStatus(true);
+        
+        Customer updated = createSampleCustomer(1L);
+        updated.setStatus(false);
+
+        when(customerRepositoryPort.findById(1L)).thenReturn(Optional.of(existing));
+        when(customerRepositoryPort.save(any())).thenReturn(updated);
+
+        // When
+        Customer result = customerService.updateCustomerStatus(1L, false);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertFalse(result.getStatus());
+        verify(customerRepositoryPort).findById(1L);
+        verify(customerRepositoryPort).save(any());
+    }
+
+    @Test
+    void updateCustomerStatus_shouldUpdateStatusFromFalseToTrue() {
+        // Given
+        Customer existing = createSampleCustomer(1L);
+        existing.setStatus(false);
+        
+        Customer updated = createSampleCustomer(1L);
+        updated.setStatus(true);
+
+        when(customerRepositoryPort.findById(1L)).thenReturn(Optional.of(existing));
+        when(customerRepositoryPort.save(any())).thenReturn(updated);
+
+        // When
+        Customer result = customerService.updateCustomerStatus(1L, true);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.getStatus());
+        verify(customerRepositoryPort).save(any());
+    }
+
+    @Test
+    void updateCustomerStatus_shouldThrowException_whenCustomerNotFound() {
+        // Given
+        when(customerRepositoryPort.findById(99L)).thenReturn(Optional.empty());
+
+        // When & Then
+        EntityNotFoundException exception = assertThrows(
+            EntityNotFoundException.class,
+            () -> customerService.updateCustomerStatus(99L, false)
+        );
+
+        assertEquals("Customer not found with id: 99", exception.getMessage());
+        verify(customerRepositoryPort).findById(99L);
+        verify(customerRepositoryPort, never()).save(any());
+    }
+
+    @Test
+    void updateCustomerStatus_shouldPreserveOtherFields() {
+        // Given
+        Customer existing = createSampleCustomer(1L);
+        existing.setStatus(true);
+        existing.setName("Jose Lema");
+        existing.setIdentification("1234567890");
+        
+        Customer savedCustomer = createSampleCustomer(1L);
+        savedCustomer.setStatus(false);
+
+        when(customerRepositoryPort.findById(1L)).thenReturn(Optional.of(existing));
+        when(customerRepositoryPort.save(any())).thenReturn(savedCustomer);
+
+        // When
+        Customer result = customerService.updateCustomerStatus(1L, false);
+
+        // Then
+        assertNotNull(result);
+        assertEquals("Jose Lema", result.getName());
+        assertEquals("1234567890", result.getIdentification());
+        assertFalse(result.getStatus());
+    }
 }

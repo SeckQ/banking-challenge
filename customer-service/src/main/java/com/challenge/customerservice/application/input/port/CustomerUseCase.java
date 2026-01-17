@@ -11,4 +11,5 @@ public interface CustomerUseCase {
     List<Customer> getAllCustomers();
     Customer updateCustomer(Long id, Customer customer);
     void deleteCustomer(Long id);
+    Customer updateCustomerStatus(Long id, Boolean status);
 }
