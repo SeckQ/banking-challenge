@@ -3,7 +3,6 @@ package com.challenge.accountservice.infraestructure.input.adapter.rest.bean;
 import com.challenge.accountservice.domain.model.MovementType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +22,6 @@ public class MovementDTO {
     private MovementType movementType;
 
     @NotNull(message = "Movement value is mandatory")
-    @Positive(message = "Movement value must be greater than zero")
     private Double value;
 
     private Double balance;
