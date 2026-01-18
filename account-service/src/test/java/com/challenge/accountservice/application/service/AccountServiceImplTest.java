@@ -107,4 +107,46 @@ public class AccountServiceImplTest {
 
         verify(accountRepository).deleteById(1L);
     }
+
+    @Test
+    void updateAccountStatus_shouldChangeStatusToFalse() {
+        Account accountWithNewStatus = new Account(1L, "123", AccountType.AHORROS, 500.0, false, 1L);
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(mockAccount));
+        when(accountRepository.save(any(Account.class))).thenReturn(accountWithNewStatus);
+
+        Account result = accountService.updateAccountStatus(1L, false);
+
+        assertNotNull(result);
+        assertEquals(false, result.getStatus());
+        verify(accountRepository).findById(1L);
+        verify(accountRepository).save(any(Account.class));
+    }
+
+    @Test
+    void updateAccountStatus_shouldChangeStatusToTrue() {
+        Account inactiveAccount = new Account(1L, "123", AccountType.AHORROS, 500.0, false, 1L);
+        Account accountWithNewStatus = new Account(1L, "123", AccountType.AHORROS, 500.0, true, 1L);
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(inactiveAccount));
+        when(accountRepository.save(any(Account.class))).thenReturn(accountWithNewStatus);
+
+        Account result = accountService.updateAccountStatus(1L, true);
+
+        assertNotNull(result);
+        assertEquals(true, result.getStatus());
+        verify(accountRepository).findById(1L);
+        verify(accountRepository).save(any(Account.class));
+    }
+
+    @Test
+    void updateAccountStatus_shouldThrowException_whenAccountNotFound() {
+        when(accountRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThrows(com.challenge.accountservice.infraestructure.exception.ResourceNotFoundException.class,
+                () -> accountService.updateAccountStatus(999L, false));
+
+        verify(accountRepository).findById(999L);
+        verify(accountRepository, never()).save(any(Account.class));
+    }
 }
