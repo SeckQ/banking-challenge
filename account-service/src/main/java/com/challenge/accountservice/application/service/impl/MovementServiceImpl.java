@@ -56,9 +56,6 @@ public class MovementServiceImpl implements MovementService {
 
             Movement saved = movementRepositoryPort.save(movement);
 
-            account.setInitialBalance(newBalance);
-            accountRepositoryPort.save(account);
-
             log.info("Movement created successfully for accountNumber: {}. Value: {}, New balance: {}", 
                 movement.getAccount().getAccountNumber(), movement.getValue(), newBalance);
             return saved;

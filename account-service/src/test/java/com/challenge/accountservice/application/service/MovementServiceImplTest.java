@@ -49,7 +49,6 @@ public class MovementServiceImplTest {
 
         assertNotNull(result.getId());
         assertEquals(700.0, result.getBalance());
-        verify(accountRepository).save(any(Account.class));
     }
 
     @Test
@@ -69,7 +68,6 @@ public class MovementServiceImplTest {
         Movement result = movementService.createMovement(mov);
 
         assertEquals(400.0, result.getBalance());
-        verify(accountRepository).save(any(Account.class));
     }
 
     @Test
