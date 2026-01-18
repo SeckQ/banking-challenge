@@ -41,7 +41,7 @@ public class ReportServiceImplTest {
                 "478758",
                 AccountType.AHORROS,
                 2000.0,
-                AccountStatus.ACTIVE,
+                true,
                 clientId
         );
 
@@ -80,7 +80,7 @@ public class ReportServiceImplTest {
         assertEquals("478758", statement.getAccountNumber());
         assertEquals("AHORROS", statement.getAccountType());
         assertEquals(2000.0, statement.getInitialBalance());
-        assertEquals(AccountStatus.ACTIVE, statement.getStatus());
+        assertEquals(true, statement.getStatus());
         assertEquals("DEBITO", statement.getMovementType());
         assertEquals(575.0, statement.getMovementValue());
         assertEquals(1425.0, statement.getAvailableBalance());

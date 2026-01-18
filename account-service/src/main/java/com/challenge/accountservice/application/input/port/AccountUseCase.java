@@ -12,4 +12,5 @@ public interface AccountUseCase {
     Account updateAccount(Long id, Account account);
     void deleteAccount(Long id);
     String getClientNameById(Long clientId);
+    Account updateAccountStatus(Long id, Boolean status);
 }

@@ -64,6 +64,16 @@ public class AccountServiceImpl implements AccountService {
         accountRepositoryPort.deleteById(id);
     }
 
+    @Override
+    public Account updateAccountStatus(Long id, Boolean status) {
+        log.info("Updating account status for id: {} to {}", id, status);
+        Account account = accountRepositoryPort.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
+        
+        account.setStatus(status);
+        return accountRepositoryPort.save(account);
+    }
+
     public String getClientNameById(Long clientId) {
         return customerClient.getCustomerNameById(clientId);
     }
