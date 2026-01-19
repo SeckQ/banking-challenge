@@ -1,10 +1,10 @@
 package com.challenge.accountservice.application.service;
 
-import com.challenge.accountservice.application.output.port.CustomerClient;
 import com.challenge.accountservice.application.output.port.AccountRepositoryPort;
 import com.challenge.accountservice.application.service.impl.AccountServiceImpl;
 import com.challenge.accountservice.domain.model.Account;
 import com.challenge.accountservice.domain.model.AccountType;
+import com.challenge.accountservice.infraestructure.messaging.cache.CustomerCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,7 @@ public class AccountServiceImplTest {
     private AccountRepositoryPort accountRepository;
 
     @Mock
-    private CustomerClient customerClient;
+    private CustomerCache customerCache;
 
     @InjectMocks
     private AccountServiceImpl accountService;
@@ -48,7 +48,7 @@ public class AccountServiceImplTest {
     @Test
     void createAccount_shouldReturnSavedAccount_withClientName() {
         when(accountRepository.save(any(Account.class))).thenReturn(mockAccount);
-        when(customerClient.getCustomerNameById(1L)).thenReturn("Juan Perez");
+        when(customerCache.get(1L)).thenReturn("Juan Perez");
 
         Account result = accountService.createAccount(mockAccount);
 
