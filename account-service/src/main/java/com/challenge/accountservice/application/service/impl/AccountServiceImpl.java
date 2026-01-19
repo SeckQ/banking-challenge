@@ -2,9 +2,9 @@ package com.challenge.accountservice.application.service.impl;
 
 import com.challenge.accountservice.application.output.port.AccountRepositoryPort;
 import com.challenge.accountservice.application.service.AccountService;
-import com.challenge.accountservice.application.output.port.CustomerClient;
 import com.challenge.accountservice.domain.model.Account;
 import com.challenge.accountservice.infraestructure.exception.ResourceNotFoundException;
+import com.challenge.accountservice.infraestructure.messaging.cache.CustomerCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,14 +18,14 @@ import java.util.Optional;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepositoryPort accountRepositoryPort;
-    private final CustomerClient customerClient;
+    private final CustomerCache customerCache;
 
     @Override
     public Account createAccount(Account account) {
         log.info("Creating account for clientId: {}", account.getClientId());
 
-        String clientName = customerClient.getCustomerNameById(account.getClientId());
-        if (clientName == null || clientName.equals("UNKNOWN")) {
+        String clientName = customerCache.get(account.getClientId());
+        if (clientName.equals("UNKNOWN")) {
             throw new ResourceNotFoundException("Client not found with id: " + account.getClientId());
         }
 
@@ -64,7 +64,17 @@ public class AccountServiceImpl implements AccountService {
         accountRepositoryPort.deleteById(id);
     }
 
+    @Override
+    public Account updateAccountStatus(Long id, Boolean status) {
+        log.info("Updating account status for id: {} to {}", id, status);
+        Account account = accountRepositoryPort.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
+        
+        account.setStatus(status);
+        return accountRepositoryPort.save(account);
+    }
+
     public String getClientNameById(Long clientId) {
-        return customerClient.getCustomerNameById(clientId);
+        return customerCache.get(clientId);
     }
 }

@@ -5,6 +5,7 @@ import com.challenge.accountservice.domain.model.Account;
 import com.challenge.accountservice.infraestructure.exception.ResourceNotFoundException;
 import com.challenge.accountservice.infraestructure.input.adapter.rest.bean.AccountRequestDTO;
 import com.challenge.accountservice.infraestructure.input.adapter.rest.bean.AccountResponseDTO;
+import com.challenge.accountservice.infraestructure.input.adapter.rest.bean.AccountStatusDTO;
 import com.challenge.accountservice.infraestructure.input.adapter.rest.mapper.AccountMapperRest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/accounts")
+@RequestMapping("/cuentas")
 @RequiredArgsConstructor
 public class AccountController {
 
@@ -86,5 +87,18 @@ public class AccountController {
         return Mono.fromRunnable(() -> accountUseCase.deleteAccount(id))
                 .subscribeOn(Schedulers.boundedElastic())
                 .then();
+    }
+
+    @PatchMapping("/{id}/status")
+    public Mono<ResponseEntity<AccountResponseDTO>> toggleAccountStatus(@PathVariable Long id,
+                                                                         @Valid @RequestBody AccountStatusDTO statusDTO) {
+        log.info("Received request to toggle account status for id {}: {}", id, statusDTO.getStatus());
+        return Mono.fromCallable(() -> {
+                    Account account = accountUseCase.updateAccountStatus(id, statusDTO.getStatus());
+                    String clientName = accountUseCase.getClientNameById(account.getClientId());
+                    return accountMapperRest.toResponseDTO(account, clientName);
+                })
+                .map(ResponseEntity::ok)
+                .subscribeOn(Schedulers.boundedElastic());
     }
 }

@@ -15,7 +15,7 @@ public class AccountStatement {
     private String accountNumber;
     private String accountType;
     private Double initialBalance;
-    private AccountStatus status;
+    private Boolean status;
     private String movementType;
     private Double movementValue;
     private Double availableBalance;

@@ -1,6 +1,5 @@
 package com.challenge.accountservice.infraestructure.input.adapter.rest.bean;
 
-import com.challenge.accountservice.domain.model.AccountStatus;
 import com.challenge.accountservice.domain.model.AccountType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,7 +25,7 @@ public class AccountRequestDTO {
     private Double initialBalance;
 
     @NotNull(message = "Status is mandatory")
-    private AccountStatus status;
+    private Boolean status;
 
     @NotNull(message = "Client ID is mandatory")
     @Positive(message = "Client ID must be greater than zero")

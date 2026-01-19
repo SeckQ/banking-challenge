@@ -5,7 +5,6 @@ import com.challenge.accountservice.application.output.port.MovementRepositoryPo
 import com.challenge.accountservice.application.service.MovementService;
 import com.challenge.accountservice.domain.model.Account;
 import com.challenge.accountservice.domain.model.Movement;
-import com.challenge.accountservice.domain.model.MovementType;
 import com.challenge.accountservice.infraestructure.exception.InsufficientFundsException;
 import com.challenge.accountservice.infraestructure.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +27,9 @@ public class MovementServiceImpl implements MovementService {
     public Movement createMovement(Movement movement) {
         log.info("Creating movement for accountId: {}", movement.getAccount().getAccountNumber());
         try {
-            if (movement.getValue() <= 0) {
+            if (movement.getValue() == null || movement.getValue() == 0) {
                 log.error("Invalid movement value: {}", movement.getValue());
-                throw new IllegalArgumentException("Movement value must be greater than zero");
+                throw new IllegalArgumentException("Movement value cannot be zero or null");
             }
 
             Account account = accountRepositoryPort.findByAccountNumber(movement.getAccount().getAccountNumber())
@@ -43,15 +42,12 @@ public class MovementServiceImpl implements MovementService {
                     .getLastBalanceByAccountNumber(account.getAccountNumber())
                     .orElse(account.getInitialBalance());
 
-            double newBalance;
+            double newBalance = lastBalance + movement.getValue();
 
-            if (movement.getMovementType() == MovementType.DEBITO) {
-                newBalance = handleDebitMovement(movement, account, lastBalance);
-            } else if (movement.getMovementType() == MovementType.CREDITO) {
-                newBalance = handleCreditMovement(movement, account, lastBalance);
-            } else {
-                log.error("Invalid movement type received: {}", movement.getMovementType());
-                throw new IllegalArgumentException("Invalid movement type");
+            if (newBalance < 0) {
+                log.error("Insufficient funds. Current balance: {}, Movement value: {}, Resulting balance: {}", 
+                    lastBalance, movement.getValue(), newBalance);
+                throw new InsufficientFundsException("Saldo no disponible");
             }
 
             movement.setDate(LocalDate.now());
@@ -60,27 +56,13 @@ public class MovementServiceImpl implements MovementService {
 
             Movement saved = movementRepositoryPort.save(movement);
 
-            account.setInitialBalance(newBalance);
-            accountRepositoryPort.save(account);
-
-            log.info("Movement created successfully for accountNumber: {}", movement.getAccount().getAccountNumber());
+            log.info("Movement created successfully for accountNumber: {}. Value: {}, New balance: {}", 
+                movement.getAccount().getAccountNumber(), movement.getValue(), newBalance);
             return saved;
         } catch (Exception ex) {
             log.error("Error while creating movement for accountId: {}", movement.getAccount().getAccountNumber(), ex);
             throw ex;
         }
-    }
-
-    private double handleDebitMovement(Movement movement, Account account, double currentBalance) {
-        if (currentBalance < movement.getValue()) {
-            log.error("Insufficient funds. Current balance: {}, Requested: {}", currentBalance, movement.getValue());
-            throw new InsufficientFundsException("Saldo no disponible");
-        }
-        return currentBalance - movement.getValue();
-    }
-
-    private double handleCreditMovement(Movement movement, Account account, double currentBalance) {
-        return currentBalance + movement.getValue();
     }
 
     @Override
