@@ -35,4 +35,9 @@ public class CustomerCache {
     public int size() {
         return customerNames.size();
     }
+
+    public void clear() {
+        log.info("Clearing customer cache");
+        customerNames.clear();
+    }
 }
