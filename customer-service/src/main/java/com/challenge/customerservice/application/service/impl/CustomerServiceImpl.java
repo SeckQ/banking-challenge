@@ -1,10 +1,10 @@
 package com.challenge.customerservice.application.service.impl;
 
 import com.challenge.customerservice.application.input.port.CustomerUseCase;
+import com.challenge.customerservice.application.output.port.CustomerEventPublisherPort;
 import com.challenge.customerservice.application.output.port.CustomerRepositoryPort;
 import com.challenge.customerservice.domain.model.Customer;
 import com.challenge.customerservice.infraestructure.messaging.event.CustomerEvent;
-import com.challenge.customerservice.infraestructure.messaging.publisher.CustomerEventPublisher;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class CustomerServiceImpl implements CustomerUseCase {
 
     private final CustomerRepositoryPort customerRepositoryPort;
-    private final CustomerEventPublisher eventPublisher;
+    private final CustomerEventPublisherPort eventPublisher;
 
     @Override
     public Customer createCustomer(Customer customer) {

@@ -1,5 +1,6 @@
 package com.challenge.customerservice.infraestructure.messaging.publisher;
 
+import com.challenge.customerservice.application.output.port.CustomerEventPublisherPort;
 import com.challenge.customerservice.infraestructure.messaging.config.RabbitMQConfig;
 import com.challenge.customerservice.infraestructure.messaging.event.CustomerEvent;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CustomerEventPublisher {
+public class CustomerEventPublisher implements CustomerEventPublisherPort {
 
     private final RabbitTemplate rabbitTemplate;
 

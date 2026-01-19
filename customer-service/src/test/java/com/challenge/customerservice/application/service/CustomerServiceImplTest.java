@@ -1,5 +1,6 @@
 package com.challenge.customerservice.application.service;
 
+import com.challenge.customerservice.application.output.port.CustomerEventPublisherPort;
 import com.challenge.customerservice.application.output.port.CustomerRepositoryPort;
 import com.challenge.customerservice.application.service.impl.CustomerServiceImpl;
 import com.challenge.customerservice.domain.model.Customer;
@@ -23,6 +24,9 @@ class CustomerServiceImplTest {
 
     @Mock
     private CustomerRepositoryPort customerRepositoryPort;
+
+    @Mock
+    private CustomerEventPublisherPort eventPublisher;
 
     @InjectMocks
     private CustomerServiceImpl customerService;
